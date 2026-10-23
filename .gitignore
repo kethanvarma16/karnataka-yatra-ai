@@ -1,0 +1,12 @@
+
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.env
+backend/karnataka_yatra.db
+# Node
+node_modules/
+frontend/dist/
+frontend/.env
+.DS_Store
