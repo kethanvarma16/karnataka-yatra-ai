@@ -11,25 +11,33 @@ from route_planner import order_destinations
 from database import init_db, save_trip, list_saved_trips
 
 load_dotenv()
-app = FastAPI(title="Karnataka Yatra AI", description="Karnataka-only personalized travel planning, budget estimates, stays and restaurant search shortcuts", version="1.0.0")
-origins = [
+
+app = FastAPI(
+    title="Karnataka Yatra AI",
+    description=(
+        "Karnataka-only personalized travel planning, budget estimates, "
+        "stays and restaurant search shortcuts"
+    ),
+    version="1.0.0",
+)
+
+# CORS must list the FRONTEND origins that call this API, not the Render API URL.
+origins = {
     "https://karnataka-yatra-ai.vercel.app",
-    "https://karnataka-yatra-ai.onrender.com",
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-]
+}
 
+# Optional: set CORS_ORIGINS in Render to comma-separated frontend origins.
 extra_origins = os.getenv("CORS_ORIGINS", "")
-if extra_origins:
-    origins.extend(
-        origin.strip().rstrip("/")
-        for origin in extra_origins.split(",")
-        if origin.strip()
-    )
+for origin in extra_origins.split(","):
+    origin = origin.strip().rstrip("/")
+    if origin:
+        origins.add(origin)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=list(set(origins)),
+    allow_origins=sorted(origins),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
